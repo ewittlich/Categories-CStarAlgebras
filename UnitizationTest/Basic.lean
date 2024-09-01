@@ -71,9 +71,11 @@ A.cstarRing
 instance forgetNormedSpace (A : CStarAlg) : NormedSpace ℂ ((forget CStarAlg).obj A) :=
 A.normedSpace
 instance forgetIsScalarTower (A : CStarAlg) :
-  IsScalarTower ℂ ((forget CStarAlg).obj A) ((forget CStarAlg).obj A) := A.isScalarTower
+  IsScalarTower ℂ ((forget CStarAlg).obj A) ((forget CStarAlg).obj A) :=
+  A.isScalarTower
 instance forgetSMulCommClass (A : CStarAlg) :
-  SMulCommClass ℂ ((forget CStarAlg).obj A) ((forget CStarAlg).obj A) := A.smulCommClass
+  SMulCommClass ℂ ((forget CStarAlg).obj A) ((forget CStarAlg).obj A) :=
+  A.smulCommClass
 instance forgetStarModule (A : CStarAlg) : StarModule ℂ ((forget CStarAlg).obj A) :=
 A.starModule
 instance forgetCompleteSpace (A : CStarAlg) : CompleteSpace ((forget CStarAlg).obj A) :=
