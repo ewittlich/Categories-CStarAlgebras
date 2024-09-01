@@ -61,23 +61,23 @@ def of (A : Type u) [NonUnitalNormedRing A] [StarRing A] [CStarRing A] [ NormedS
   [NormedSpace ℂ A] [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
   [CompleteSpace A] : (of A : Type u) = A := rfl
 
-instance forget_non_unital_normed_ring (A : CStarAlg) :
-  non_unital_normed_ring ((forget CStarAlg).obj A) :=
-A.is_non_unital_normed_ring
-instance forget_star_ring (A : CStarAlg) : star_ring ((forget CStarAlg).obj A) :=
-A.is_star_ring
-instance forget_cstar_ring (A : CStarAlg) : cstar_ring ((forget CStarAlg).obj A) :=
-A.is_cstar_ring
-instance forget_normed_space (A : CStarAlg) : normed_space ℂ ((forget CStarAlg).obj A) :=
-A.is_normed_space
-instance forget_is_scalar_tower (A : CStarAlg) :
-  is_scalar_tower ℂ ((forget CStarAlg).obj A) ((forget CStarAlg).obj A) := A.is_is_scalar_tower
-instance forget_is_smul_comm_class (A : CStarAlg) :
-  smul_comm_class ℂ ((forget CStarAlg).obj A) ((forget CStarAlg).obj A) := A.is_smul_comm_class
-instance forget_star_module (A : CStarAlg) : star_module ℂ ((forget CStarAlg).obj A) :=
-A.is_star_module
-instance forget_complete_space (A : CStarAlg) : complete_space ((forget CStarAlg).obj A) :=
-A.is_complete_space
+instance forgetNonUnitalNormedRing (A : CStarAlg) :
+  NonUnitalNormedRing ((forget CStarAlg).obj A) :=
+A.nonUnitalNormedRing
+instance forgetStarRing (A : CStarAlg) : StarRing ((forget CStarAlg).obj A) :=
+A.starRing
+instance forgetCStarRing (A : CStarAlg) : CStarRing ((forget CStarAlg).obj A) :=
+A.cstarRing
+instance forgetNormedSpace (A : CStarAlg) : NormedSpace ℂ ((forget CStarAlg).obj A) :=
+A.normedSpace
+instance forgetIsScalarTower (A : CStarAlg) :
+  IsScalarTower ℂ ((forget CStarAlg).obj A) ((forget CStarAlg).obj A) := A.isScalarTower
+instance forgetSMulCommClass (A : CStarAlg) :
+  SMulCommClass ℂ ((forget CStarAlg).obj A) ((forget CStarAlg).obj A) := A.smulCommClass
+instance forgetStarModule (A : CStarAlg) : StarModule ℂ ((forget CStarAlg).obj A) :=
+A.starModule
+instance forgetCompleteSpace (A : CStarAlg) : CompleteSpace ((forget CStarAlg).obj A) :=
+A.completeSpace
 
 end CStarAlg
 
