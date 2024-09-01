@@ -46,20 +46,20 @@ attribute [instance] nonUnitalNormedRing starRing cstarRing normedSpace
 noncomputable instance : Category CStarAlg.{u} :=
 { Hom := fun A B => A →⋆ₙₐ[ℂ] B,
   id := fun A => NonUnitalStarAlgHom.id ℂ A,
-  comp := fun A B C f g  => g.comp f }
+  comp := fun A B C f g => g.comp f }
 
 noncomputable instance : ConcreteCategory CStarAlg.{u} :=
 { forget := { obj := fun A => A, map := fun A B f => f },
   forget_faithful := { } }
 
-/-- Construct a bundled `CStarAlg` from the underlying typa and appropriate type classes. -/
+/-- Construct a bundled `CStarAlg` from the underlying type and appropriate type classes. -/
 def of (A : Type u) [NonUnitalNormedRing A] [StarRing A] [CStarRing A] [ NormedSpace ℂ A]
-  [is_scalar_tower ℂ A A] [smul_comm_class ℂ A A] [star_module ℂ A] [complete_space A] :
+  [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] [CompleteSpace A] :
   CStarAlg := ⟨A⟩
 
-@[simp] lemma coe_of (A : Type u) [non_unital_normed_ring A] [star_ring A] [cstar_ring A]
-  [normed_space ℂ A] [is_scalar_tower ℂ A A] [smul_comm_class ℂ A A] [star_module ℂ A]
-  [complete_space A] : (of A : Type u) = A := rfl
+@[simp] lemma coe_of (A : Type u) [NonUnitalNormedRing A] [StarRing A] [CStarRing A]
+  [NormedSpace ℂ A] [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
+  [CompleteSpace A] : (of A : Type u) = A := rfl
 
 instance forget_non_unital_normed_ring (A : CStarAlg) :
   non_unital_normed_ring ((forget CStarAlg).obj A) :=
