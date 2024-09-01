@@ -85,38 +85,38 @@ end CStarAlg
 
 namespace CStarAlg₁
 
-noncomputable instance : inhabited CStarAlg₁ := ⟨⟨ℂ⟩⟩
+noncomputable instance : Inhabited CStarAlg₁ := ⟨⟨ℂ⟩⟩
 
-instance : has_coe_to_sort CStarAlg₁ Type* := ⟨CStarAlg₁.α⟩
+instance : CoeSort CStarAlg₁ Type* := ⟨CStarAlg₁.carrier⟩
 
-attribute [instance] is_normed_ring is_star_ring is_cstar_ring is_normed_algebra is_star_module
-  is_complete_space
+attribute [instance] normedRing starRing cstarRing normedAlgebra starModule
+  completeSpace
 
-noncomputable instance : category CStarAlg₁.{u} :=
-{ hom := λ A B, A →⋆ₐ[ℂ] B,
-  id := λ A, star_alg_hom.id ℂ A,
-  comp := λ A B C f g, g.comp f }
+noncomputable instance : Category CStarAlg₁.{u} :=
+{ Hom := fun A B => A →⋆ₐ[ℂ] B,
+  id := fun A => StarAlgHom.id ℂ A,
+  comp := fun A B C f g => g.comp f }
 
-noncomputable instance : concrete_category CStarAlg₁.{u} :=
-{ forget := { obj := λ A, A, map := λ A B f, f },
+noncomputable instance : ConcreteCategory CStarAlg₁.{u} :=
+{ forget := { obj := fun A => A, map := fun A B f => f },
   forget_faithful := { } }
 
 /-- Construct a bundled `CStarAlg₁` from the underlying typa and appropriate type classes. -/
-def of (A : Type u) [normed_ring A] [star_ring A] [cstar_ring A] [normed_algebra ℂ A]
-  [star_module ℂ A] [complete_space A] : CStarAlg₁ := ⟨A⟩
+def of (A : Type u) [NormedRing A] [StarRing A] [CStarRing A] [NormedAlgebra ℂ A]
+  [StarModule ℂ A] [CompleteSpace A] : CStarAlg₁ := ⟨A⟩
 
-@[simp] lemma coe_of (A : Type u) [normed_ring A] [star_ring A] [cstar_ring A] [normed_algebra ℂ A]
-  [star_module ℂ A] [complete_space A] : (of A : Type u) = A := rfl
+@[simp] lemma coe_of (A : Type u) [NormedRing A] [StarRing A] [CStarRing A] [NormedAlgebra ℂ A]
+  [StarModule ℂ A] [CompleteSpace A] : (of A : Type u) = A := rfl
 
 noncomputable instance has_forget_to_CStarAlg : has_forget₂ CStarAlg₁ CStarAlg :=
 { forget₂ :=
-  { obj := λ A, ⟨A⟩,
-    map := λ A B f, (f : A →⋆ₙₐ[ℂ] B), } }
+  { obj := fun A => ⟨A⟩,
+    map := fun A B f => (f : A →⋆ₙₐ[ℂ] B), } }
 
-noncomputable instance has_forget_to_Algebra : has_forget₂ CStarAlg₁ (Algebra ℂ) :=
+noncomputable instance forgetToAlgebra : has_forget₂ CStarAlg₁ (Algebra ℂ) :=
 { forget₂ :=
-  { obj := λ A, ⟨A⟩,
-    map := λ A B f, f.to_alg_hom } }
+  { obj := fun A => ⟨A⟩,
+    map := fun A B f => f.to_alg_hom } }
 
 end CStarAlg₁
 
