@@ -50,9 +50,12 @@ noncomputable instance : Category CStarAlg.{u} :=
 
 noncomputable instance : ConcreteCategory CStarAlg.{u} :=
 { forget :=
-  { obj := fun A => A,
-    map := fun {X Y} f => f.toFun },
-  forget_faithful := {sorry }}
+    { obj := fun A => A,
+      map := fun {X Y} f => f.toFun },
+  forget_faithful := by
+    -- ⊢ { obj := fun A ↦ A.carrier, map := fun {X Y} f ↦ f.toFun, map_id := ⋯, map_comp := ⋯ }.Faithful
+    apply
+    sorry }
 
 /-- Construct a bundled `CStarAlg` from the underlying type and appropriate type classes. -/
 def of (A : Type u) [NonUnitalNormedRing A] [StarRing A] [CStarRing A] [ NormedSpace ℂ A]
@@ -101,7 +104,9 @@ noncomputable instance : Category CStarAlg₁.{u} :=
 
 noncomputable instance : ConcreteCategory CStarAlg₁.{u} :=
 { forget := { obj := fun A => A, map := fun {X Y} f => f.toFun },
-  forget_faithful := {sorry } }
+  forget_faithful := by
+    sorry
+     }
 
 /-- Construct a bundled `CStarAlg₁` from the underlying typa and appropriate type classes. -/
 def of (A : Type u) [NormedRing A] [StarRing A] [CStarRing A] [NormedAlgebra ℂ A]
@@ -138,7 +143,9 @@ noncomputable instance : Category CommCStarAlg₁.{u} :=
 
 noncomputable instance : ConcreteCategory CommCStarAlg₁.{u} :=
 { forget := { obj := fun A => A, map := fun {X Y} f => f.toFun },
-  forget_faithful := {sorry } }
+  forget_faithful := by
+    sorry
+    }
 
 /-- Construct a bundled `CommCStarAlg₁` from the underlying typa and appropriate type classes. -/
 def of (A : Type u) [NormedCommRing A] [StarRing A] [CStarRing A] [NormedAlgebra ℂ A]
@@ -154,51 +161,51 @@ instance forget_to_CStarAlg₁ : forget₂ CommCStarAlg₁ CStarAlg₁ :=
 
 end CommCStarAlg₁
 
-namespace star_alg_equiv
+namespace StarAlgEquiv
 
 /-- Build an isomorphism in the category `CStarAlg` from a `star_alg_equiv` between C⋆-algebras -/
 @[simps]
-noncomputable def to_CStarAlg_iso {A B : Type u} [non_unital_normed_ring A] [star_ring A]
-  [cstar_ring A] [normed_space ℂ A] [is_scalar_tower ℂ A A] [smul_comm_class ℂ A A]
-  [star_module ℂ A] [complete_space A] [non_unital_normed_ring B] [star_ring B] [cstar_ring B]
-  [normed_space ℂ B] [is_scalar_tower ℂ B B] [smul_comm_class ℂ B B] [star_module ℂ B]
-  [complete_space B] (e : A ≃⋆ₐ[ℂ] B) : CStarAlg.of A ≅ CStarAlg.of B :=
-{ hom := (e : A →⋆ₙₐ[ℂ] B),
+noncomputable def CStarAlgIso {A B : Type u} [NonUnitalNormedRing A] [StarRing A]
+  [CStarRing A] [NormedSpace ℂ A] [IsScalarTower ℂ A A] [SMulCommClass ℂ A A]
+  [StarModule ℂ A] [CompleteSpace A] [NonUnitalNormedRing B] [StarRing B] [CStarRing B]
+  [NormedSpace ℂ B] [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] [StarModule ℂ B]
+  [CompleteSpace B] (e : A ≃⋆ₐ[ℂ] B) : CStarAlg.of A ≅ CStarAlg.of B :=
+{ Hom := (e : A →⋆ₙₐ[ℂ] B),
   inv := (e.symm : B →⋆ₙₐ[ℂ] A),
-  hom_inv_id' := non_unital_star_alg_hom.ext $ λ _, e.symm_apply_apply _,
-  inv_hom_id' := non_unital_star_alg_hom.ext $ λ _, e.apply_symm_apply _ }
+  hom_inv_id' := NonUnitalStarAlgHom.ext $ fun _ => e.symm_apply_apply _,
+  inv_hom_id' := NonUnitalStarAlgHom.ext $ fun _ => e.apply_symm_apply _ }
 
 /-- Build an isomorphism in the category `CStarAlg₁` from a `star_alg_equiv` between unital
 C⋆-algebras -/
 @[simps]
-noncomputable def to_CStarAlg₁_iso {A B : Type u} [normed_ring A] [star_ring A] [cstar_ring A]
-  [normed_algebra ℂ A] [star_module ℂ A] [complete_space A] [normed_ring B] [star_ring B]
-  [cstar_ring B] [normed_algebra ℂ B] [star_module ℂ B] [complete_space B]
+noncomputable def CStarAlg₁Iso {A B : Type u} [NormedRing A] [StarRing A] [CStarRing A]
+  [NormedAlgebra ℂ A] [StarModule ℂ A] [CompleteSpace A] [NormedRing B] [StarRing B]
+  [CStarRing B] [NormedAlgebra ℂ B] [StarModule ℂ B] [CompleteSpace B]
   (e : A ≃⋆ₐ[ℂ] B) : CStarAlg₁.of A ≅ CStarAlg₁.of B :=
 { hom := (e : A →⋆ₐ[ℂ] B),
   inv := (e.symm : B →⋆ₐ[ℂ] A),
-  hom_inv_id' := star_alg_hom.ext $ λ _, e.symm_apply_apply _,
-  inv_hom_id' := star_alg_hom.ext $ λ _, e.apply_symm_apply _ }
+  hom_inv_id' := StarAlgHom.ext $ fun _ => e.SymmApplyApply _,
+  inv_hom_id' := StarAlgHom.ext $ fun _ => e.ApplySymmApply _ }
 
 /-- Build an isomorphism in the category `CommCStarAlg₁` from a `star_alg_equiv` between
 commutative unital C⋆-algebras -/
 @[simps]
-noncomputable def to_CommCStarAlg₁_iso {A B : Type u} [normed_comm_ring A] [star_ring A]
-  [cstar_ring A] [normed_algebra ℂ A] [star_module ℂ A] [complete_space A] [normed_comm_ring B]
-  [star_ring B] [cstar_ring B] [normed_algebra ℂ B] [star_module ℂ B] [complete_space B]
+noncomputable def CommCStarAlg₁Iso {A B : Type u} [NormedCommRing A] [StarRing A]
+  [CStarRing A] [NormedAlgebra ℂ A] [StarModule ℂ A] [CompleteSpace A] [NormedCommRing B]
+  [StarRing B] [CStarRing B] [NormedAlgebra ℂ B] [StarModule ℂ B] [CompleteSpace B]
   (e : A ≃⋆ₐ[ℂ] B) : CommCStarAlg₁.of A ≅ CommCStarAlg₁.of B :=
 { hom := (e : A →⋆ₐ[ℂ] B),
   inv := (e.symm : B →⋆ₐ[ℂ] A),
-  hom_inv_id' := star_alg_hom.ext $ λ _, e.symm_apply_apply _,
-  inv_hom_id' := star_alg_hom.ext $ λ _, e.apply_symm_apply _ }
+  hom_inv_id' := StarAlgHom.ext $ fun _ => e.SymmApplyApply _,
+  inv_hom_id' := star_alg_hom.ext $ fun _ => e.ApplySymmApply _ }
 
-end star_alg_equiv
+end StarAlgEquiv
 
 namespace category_theory.iso
 
 /-- Build a `star_alg_equiv` from an isomorphism in the category `CStarAlg`. -/
 noncomputable def CStarAlg_iso_to_star_alg_equiv {X Y : CStarAlg} (i : X ≅ Y) : X ≃⋆ₐ[ℂ] Y :=
-{ to_fun    := i.hom,
+{ to_fun    := i.Hom,
   inv_fun   := i.inv,
   left_inv  := i.hom_inv_id_apply,
   right_inv := i.inv_hom_id_apply,
