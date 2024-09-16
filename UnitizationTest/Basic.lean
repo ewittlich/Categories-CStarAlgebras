@@ -1,5 +1,7 @@
 import Mathlib
 
+noncomputable section
+
 open CategoryTheory
 
 /-- The type of C⋆-algebras with ⋆-algebra morphisms. -/
@@ -52,10 +54,13 @@ noncomputable instance : ConcreteCategory CStarAlg.{u} :=
 { forget :=
     { obj := fun A => A,
       map := fun {X Y} f => f.toFun },
-  forget_faithful := by
-    -- ⊢ { obj := fun A ↦ A.carrier, map := fun {X Y} f ↦ f.toFun, map_id := ⋯, map_comp := ⋯ }.Faithful
-    apply
-    sorry }
+  forget_faithful := {
+    map_injective := by
+      dsimp
+      intro X Y
+      exact DFunLike.coe_injective (F := X →⋆ₙₐ[ℂ] Y)
+  }
+     }
 
 /-- Construct a bundled `CStarAlg` from the underlying type and appropriate type classes. -/
 def of (A : Type u) [NonUnitalNormedRing A] [StarRing A] [CStarRing A] [ NormedSpace ℂ A]
@@ -103,9 +108,15 @@ noncomputable instance : Category CStarAlg₁.{u} :=
   comp := fun  f g => g.comp f }
 
 noncomputable instance : ConcreteCategory CStarAlg₁.{u} :=
-{ forget := { obj := fun A => A, map := fun {X Y} f => f.toFun },
-  forget_faithful := by
-    sorry
+{ forget :=
+  { obj := fun A => A,
+    map := fun {X Y} f => f.toFun },
+  forget_faithful := {
+    map_injective := by
+      dsimp
+      intro X Y
+      exact DFunLike.coe_injective (F := X →⋆ₐ[ℂ] Y)
+      }
      }
 
 /-- Construct a bundled `CStarAlg₁` from the underlying typa and appropriate type classes. -/
@@ -115,15 +126,18 @@ def of (A : Type u) [NormedRing A] [StarRing A] [CStarRing A] [NormedAlgebra ℂ
 @[simp] lemma coe_of (A : Type u) [NormedRing A] [StarRing A] [CStarRing A] [NormedAlgebra ℂ A]
   [StarModule ℂ A] [CompleteSpace A] : (of A : Type u) = A := rfl
 
-noncomputable instance forgetToCStarAlg : forget₂ CStarAlg₁ CStarAlg :=
-{ forget₂ :=
-  { obj := fun A => ⟨A⟩,
-    map := fun A B f => (f : A →⋆ₙₐ[ℂ] B), } }
+instance hasForget₂CStarAlg : HasForget₂ CStarAlg₁ CStarAlg where
+  forget₂ := {
+    obj := fun X ↦ { carrier := X.carrier }
+    map := fun {X Y} f ↦ NonUnitalStarAlgHomClass.toNonUnitalStarAlgHom (F := X →⋆ₐ[ℂ] Y) f
+  }
 
-noncomputable instance forgetToAlgebra : forget₂ CStarAlg₁ (Algebra ℂ) :=
-{ forget₂ :=
-  { obj := fun A => ⟨A⟩,
-    map := fun A B f => f.to_alg_hom } }
+
+noncomputable instance forgetToAlgebra : HasForget₂ CStarAlg₁ (AlgebraCat ℂ) where
+  forget₂ := {
+    obj := fun X ↦ {carrier:= X.carrier},
+    map := fun {X Y} f ↦ AlgHomClass.toAlgHom (F := X →⋆ₐ[ℂ] Y) f
+  }
 
 end CStarAlg₁
 
@@ -142,7 +156,9 @@ noncomputable instance : Category CommCStarAlg₁.{u} :=
   comp := fun f g => g.comp f }
 
 noncomputable instance : ConcreteCategory CommCStarAlg₁.{u} :=
-{ forget := { obj := fun A => A, map := fun {X Y} f => f.toFun },
+{ forget := {
+    obj := fun A => A,
+    map := fun {X Y} f => f.toFun },
   forget_faithful := by
     sorry
     }
