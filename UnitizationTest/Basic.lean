@@ -46,9 +46,9 @@ attribute [instance] nonUnitalNormedRing starRing cstarRing normedSpace
   isScalarTower smulCommClass starModule completeSpace
 
 noncomputable instance : Category CStarAlg.{u} :=
-{ Hom := fun A B => A →⋆ₙₐ[ℂ] B,
-  id := fun A => NonUnitalStarAlgHom.id ℂ A,
-  comp := fun f g => g.comp f }
+{ Hom := fun A B ↦ A →⋆ₙₐ[ℂ] B,
+  id := fun A ↦ NonUnitalStarAlgHom.id ℂ A,
+  comp := fun f g ↦ g.comp f }
 
 noncomputable instance : ConcreteCategory CStarAlg.{u} :=
 { forget :=
@@ -119,7 +119,7 @@ noncomputable instance : ConcreteCategory CStarAlg₁.{u} :=
       }
      }
 
-/-- Construct a bundled `CStarAlg₁` from the underlying typa and appropriate type classes. -/
+/-- Construct a bundled `CStarAlg₁` from the underlying type and appropriate type classes. -/
 def of (A : Type u) [NormedRing A] [StarRing A] [CStarRing A] [NormedAlgebra ℂ A]
   [StarModule ℂ A] [CompleteSpace A] : CStarAlg₁ := ⟨A⟩
 
@@ -157,41 +157,51 @@ noncomputable instance : Category CommCStarAlg₁.{u} :=
 
 noncomputable instance : ConcreteCategory CommCStarAlg₁.{u} :=
 { forget := {
-    obj := fun A => A,
-    map := fun {X Y} f => f.toFun },
-  forget_faithful := by
-    sorry
-    }
+    obj := fun A ↦ A,
+    map := fun {X Y} f ↦ f.toFun },
+  forget_faithful := {
+    map_injective := by
+      dsimp
+      intros X Y
+      exact DFunLike.coe_injective (F := X →⋆ₐ[ℂ] Y)
+  }
+}
 
-/-- Construct a bundled `CommCStarAlg₁` from the underlying typa and appropriate type classes. -/
+/-- Construct a bundled `CommCStarAlg₁` from the underlying type and appropriate type classes. -/
 def of (A : Type u) [NormedCommRing A] [StarRing A] [CStarRing A] [NormedAlgebra ℂ A]
   [StarModule ℂ A] [CompleteSpace A] : CommCStarAlg₁ := ⟨A⟩
 
 @[simp] lemma coe_of (A : Type u) [NormedCommRing A] [StarRing A] [CStarRing A]
   [NormedAlgebra ℂ A] [StarModule ℂ A] [CompleteSpace A] : (of A : Type u) = A := rfl
 
-instance forget_to_CStarAlg₁ : forget₂ CommCStarAlg₁ CStarAlg₁ :=
+instance hasForget₂CStarAlg₁ : HasForget₂ CommCStarAlg₁ CStarAlg₁ where
+  forget₂ := {
+    obj := fun X ↦ { CommCStarAlg₁carrier := X.carrier }
+    map := fun {X Y} ↦ StarAlgHomClass.toStarAlgHom (F := X →*ₐ[ℂ] Y) f
+  }
+
+instance forgetToCStarAlg₁ : forget₂ CommCStarAlg₁ CStarAlg₁ (AlgebraCat ℂ) :=
 { forget₂ :=
-  { obj := fun A => ⟨A⟩,
-    map := fun {X Y} f => f.toFun } }
+  { obj := fun A ↦ ⟨A⟩,
+    map := fun {X Y} f ↦ f.toFun } }
 
 end CommCStarAlg₁
 
 namespace StarAlgEquiv
 
-/-- Build an isomorphism in the category `CStarAlg` from a `star_alg_equiv` between C⋆-algebras -/
+/-- Build an isomorphism in the category `CStarAlg` from a `StarAlgEquiv` between C⋆-algebras -/
 @[simps]
 noncomputable def CStarAlgIso {A B : Type u} [NonUnitalNormedRing A] [StarRing A]
   [CStarRing A] [NormedSpace ℂ A] [IsScalarTower ℂ A A] [SMulCommClass ℂ A A]
   [StarModule ℂ A] [CompleteSpace A] [NonUnitalNormedRing B] [StarRing B] [CStarRing B]
   [NormedSpace ℂ B] [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] [StarModule ℂ B]
   [CompleteSpace B] (e : A ≃⋆ₐ[ℂ] B) : CStarAlg.of A ≅ CStarAlg.of B :=
-{ Hom := (e : A →⋆ₙₐ[ℂ] B),
+{ hom := (e : A →⋆ₙₐ[ℂ] B),
   inv := (e.symm : B →⋆ₙₐ[ℂ] A),
-  hom_inv_id' := NonUnitalStarAlgHom.ext $ fun _ => e.symm_apply_apply _,
-  inv_hom_id' := NonUnitalStarAlgHom.ext $ fun _ => e.apply_symm_apply _ }
+  hom_inv_id := NonUnitalStarAlgHom.ext $ fun _ ↦ e.symm_apply_apply _,
+  inv_hom_id := NonUnitalStarAlgHom.ext $ fun _ ↦ e.apply_symm_apply _ }
 
-/-- Build an isomorphism in the category `CStarAlg₁` from a `star_alg_equiv` between unital
+/-- Build an isomorphism in the category `CStarAlg₁` from a `StarAlgEquiv` between unital
 C⋆-algebras -/
 @[simps]
 noncomputable def CStarAlg₁Iso {A B : Type u} [NormedRing A] [StarRing A] [CStarRing A]
@@ -200,10 +210,10 @@ noncomputable def CStarAlg₁Iso {A B : Type u} [NormedRing A] [StarRing A] [CSt
   (e : A ≃⋆ₐ[ℂ] B) : CStarAlg₁.of A ≅ CStarAlg₁.of B :=
 { hom := (e : A →⋆ₐ[ℂ] B),
   inv := (e.symm : B →⋆ₐ[ℂ] A),
-  hom_inv_id' := StarAlgHom.ext $ fun _ => e.SymmApplyApply _,
-  inv_hom_id' := StarAlgHom.ext $ fun _ => e.ApplySymmApply _ }
+  hom_inv_id := StarAlgHom.ext $ fun _ => e.symm_apply_apply _,
+  inv_hom_id := StarAlgHom.ext $ fun _ => e.apply_symm_apply _ }
 
-/-- Build an isomorphism in the category `CommCStarAlg₁` from a `star_alg_equiv` between
+/-- Build an isomorphism in the category `CommCStarAlg₁` from a `StarAlgEquiv` between
 commutative unital C⋆-algebras -/
 @[simps]
 noncomputable def CommCStarAlg₁Iso {A B : Type u} [NormedCommRing A] [StarRing A]
@@ -212,17 +222,17 @@ noncomputable def CommCStarAlg₁Iso {A B : Type u} [NormedCommRing A] [StarRing
   (e : A ≃⋆ₐ[ℂ] B) : CommCStarAlg₁.of A ≅ CommCStarAlg₁.of B :=
 { hom := (e : A →⋆ₐ[ℂ] B),
   inv := (e.symm : B →⋆ₐ[ℂ] A),
-  hom_inv_id' := StarAlgHom.ext $ fun _ => e.SymmApplyApply _,
-  inv_hom_id' := star_alg_hom.ext $ fun _ => e.ApplySymmApply _ }
+  hom_inv_id := StarAlgHom.ext $ fun _ => e.symm_apply_apply _,
+  inv_hom_id := StarAlgHom.ext $ fun _ => e.apply_symm_apply _ }
 
 end StarAlgEquiv
 
-namespace category_theory.iso
+namespace CategoryTheory.Iso
 
-/-- Build a `star_alg_equiv` from an isomorphism in the category `CStarAlg`. -/
-noncomputable def CStarAlg_iso_to_star_alg_equiv {X Y : CStarAlg} (i : X ≅ Y) : X ≃⋆ₐ[ℂ] Y :=
-{ to_fun    := i.Hom,
-  inv_fun   := i.inv,
+/-- Build a `StarAlgEquiv` from an isomorphism in the category `CStarAlg`. -/
+noncomputable def CStarAlgIsoToStarAlgEquiv {X Y : CStarAlg} (i : X ≅ Y) : X ≃⋆ₐ[ℂ] Y :=
+{ toFun    := i.hom,
+  invFun   := i.inv,
   left_inv  := i.hom_inv_id_apply,
   right_inv := i.inv_hom_id_apply,
   map_add'  := map_add i.hom,
@@ -230,10 +240,10 @@ noncomputable def CStarAlg_iso_to_star_alg_equiv {X Y : CStarAlg} (i : X ≅ Y) 
   map_smul' := map_smul i.hom,
   map_star' := map_star i.hom, }
 
-/-- Build a `star_alg_equiv` from an isomorphism in the category `CStarAlg₁`. -/
-noncomputable def CStarAlg₁_iso_to_star_alg_equiv {X Y : CStarAlg₁} (i : X ≅ Y) : X ≃⋆ₐ[ℂ] Y :=
-{ to_fun    := i.hom,
-  inv_fun   := i.inv,
+/-- Build a `StarAlgEquiv` from an isomorphism in the category `CStarAlg₁`. -/
+noncomputable def CStarAlg₁IsoToStarAlgEquiv {X Y : CStarAlg₁} (i : X ≅ Y) : X ≃⋆ₐ[ℂ] Y :=
+{ toFun    := i.hom,
+  invFun   := i.inv,
   left_inv  := i.hom_inv_id_apply,
   right_inv := i.inv_hom_id_apply,
   map_add'  := map_add i.hom,
@@ -241,11 +251,11 @@ noncomputable def CStarAlg₁_iso_to_star_alg_equiv {X Y : CStarAlg₁} (i : X �
   map_smul' := map_smul i.hom,
   map_star' := map_star i.hom, }
 
-/-- Build a `star_alg_equiv` from an isomorphism in the category `CommCStarAlg₁`. -/
-noncomputable def CommCStarAlg₁_iso_to_star_alg_equiv {X Y : CommCStarAlg₁} (i : X ≅ Y) :
+/-- Build a `StarAlgEquiv` from an isomorphism in the category `CommCStarAlg₁`. -/
+noncomputable def CommCStarAlg₁IsoToStarAlgEquiv {X Y : CommCStarAlg₁} (i : X ≅ Y) :
   X ≃⋆ₐ[ℂ] Y :=
-{ to_fun    := i.hom,
-  inv_fun   := i.inv,
+{ toFun    := i.hom,
+  invFun   := i.inv,
   left_inv  := i.hom_inv_id_apply,
   right_inv := i.inv_hom_id_apply,
   map_add'  := map_add i.hom,
@@ -253,7 +263,7 @@ noncomputable def CommCStarAlg₁_iso_to_star_alg_equiv {X Y : CommCStarAlg₁} 
   map_smul' := map_smul i.hom,
   map_star' := map_star i.hom, }
 
-end category_theory.iso
+end CategoryTheory.Iso
 
 instance CStarAlg.forget_reflects_isos : reflects_isomorphisms (forget CStarAlg.{u}) :=
 { reflects := λ X Y f _,
