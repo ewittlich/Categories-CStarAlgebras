@@ -261,7 +261,6 @@ noncomputable def CStarAlg₁IsoToStarAlgEquiv {X Y : CStarAlg₁} (i : X ≅ Y)
   map_smul' := map_smul i.hom,
   map_star' := map_star i.hom, }
 
-set_option synthInstance.maxHeartbeats 100000 in
 /-- Build a `StarAlgEquiv` from an isomorphism in the category `CommCStarAlg₁`. -/
 noncomputable def CommCStarAlg₁IsoToStarAlgEquiv {X Y : CommCStarAlg₁} (i : X ≅ Y) :
   X ≃⋆ₐ[ℂ] Y :=
