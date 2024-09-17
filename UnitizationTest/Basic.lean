@@ -265,8 +265,8 @@ noncomputable def CommCStarAlg₁IsoToStarAlgEquiv {X Y : CommCStarAlg₁} (i : 
 
 end CategoryTheory.Iso
 
-instance CStarAlg.forget_reflects_isos : reflects_isomorphisms (forget CStarAlg.{u}) :=
-{ reflects := λ X Y f _,
+instance CStarAlg.forgetReflectsIsos : reflectsIsomorphisms (forget CStarAlg.{u}) :=
+{ reflects := fun X Y f _,
   begin
     resetI,
     let i := as_iso ((forget CStarAlg).map f),
@@ -274,8 +274,8 @@ instance CStarAlg.forget_reflects_isos : reflects_isomorphisms (forget CStarAlg.
     exact ⟨(is_iso.of_iso e.to_CStarAlg_iso).1⟩,
   end }
 
-instance CStarAlg₁.forget_reflects_isos : reflects_isomorphisms (forget CStarAlg₁.{u}) :=
-{ reflects := λ X Y f _,
+instance CStarAlg₁.forgetReflectsIsos : reflectsIsomorphisms (forget CStarAlg₁.{u}) :=
+{ reflects := fun X Y f _,
   begin
     resetI,
     let i := as_iso ((forget CStarAlg₁).map f),
@@ -283,8 +283,8 @@ instance CStarAlg₁.forget_reflects_isos : reflects_isomorphisms (forget CStarA
     exact ⟨(is_iso.of_iso e.to_CStarAlg₁_iso).1⟩,
   end }
 
-instance CommCStarAlg₁.forget_reflects_isos : reflects_isomorphisms (forget CommCStarAlg₁.{u}) :=
-{ reflects := λ X Y f _,
+instance CommCStarAlg₁.forgetReflectsIsos : reflectsIsomorphisms (forget CommCStarAlg₁.{u}) :=
+{ reflects := fun X Y f _,
   begin
     resetI,
     let i := as_iso ((forget CommCStarAlg₁).map f),
