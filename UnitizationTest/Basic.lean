@@ -177,7 +177,7 @@ def of (A : Type u) [NormedCommRing A] [StarRing A] [CStarRing A] [NormedAlgebra
 instance hasForget₂CStarAlg₁ : HasForget₂ CommCStarAlg₁ CStarAlg₁ where
   forget₂ := {
     obj := fun X ↦ { CommCStarAlg₁carrier := X.carrier }
-    map := fun {X Y} ↦ StarAlgHomClass.toStarAlgHom (F := X →*ₐ[ℂ] Y) f
+    map := fun f ↦ f
   }
 
 instance forgetToCStarAlg₁ : forget₂ CommCStarAlg₁ CStarAlg₁ (AlgebraCat ℂ) :=
