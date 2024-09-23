@@ -16,6 +16,19 @@ structure CStarAlg :=
 [starModule : StarModule ℂ carrier]
 [completeSpace : CompleteSpace carrier]
 
+/-- The type of commutative C*-algebras with *-algebra morphisms. -/
+structure CommCStarAlg :=
+(carrier : Type u)
+[nonUnitalNormedCommRing : NonUnitalNormedCommRing carrier]
+[starRing : StarRing carrier]
+[cstarRing : CStarRing carrier]
+[normedSpace : NormedSpace ℂ carrier]
+[isScalarTower : IsScalarTower ℂ carrier carrier]
+[smulCommClass : SMulCommClass ℂ carrier carrier]
+[starModule : StarModule ℂ carrier]
+[completeSpace : CompleteSpace carrier]
+
+
 /-- The type of unital C⋆-algebras with unital ⋆-algebra morphisms. -/
 structure CStarAlg₁ :=
 (carrier : Type u)
@@ -92,6 +105,63 @@ instance forgetCompleteSpace (A : CStarAlg) : CompleteSpace ((forget CStarAlg).o
 A.completeSpace
 
 end CStarAlg
+
+namespace CommCStarAlg
+
+noncomputable instance : Inhabited CommCStarAlg := ⟨⟨ℂ⟩⟩
+
+instance : CoeSort CommCStarAlg (Type u) := ⟨CommCStarAlg.carrier⟩
+
+attribute [instance] nonUnitalNormedCommRing starRing cstarRing normedSpace
+  isScalarTower smulCommClass starModule completeSpace
+
+noncomputable instance : Category CommCStarAlg.{u} :=
+{ Hom := fun A B ↦ A →⋆ₙₐ[ℂ] B,
+  id := fun A ↦ NonUnitalStarAlgHom.id ℂ A,
+  comp := fun f g ↦ g.comp f }
+
+noncomputable instance : ConcreteCategory CommCStarAlg.{u} :=
+{ forget :=
+    { obj := fun A ↦ A,
+      map := fun {X Y} f ↦ f.toFun },
+  forget_faithful := {
+    map_injective := by
+      dsimp
+      intro X Y
+      exact DFunLike.coe_injective (F := X →⋆ₙₐ[ℂ] Y)
+    }
+  }
+
+/-- Construct a bundled `CommCStarAlg` from the underlying type and appropriate type classes. -/
+def of (A : Type u) [NonUnitalNormedCommRing A] [StarRing A] [CStarRing A] [ NormedSpace ℂ A]
+  [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] [CompleteSpace A] :
+  CStarAlg := ⟨A⟩
+
+@[simp] lemma coe_of (A : Type u) [NonUnitalNormedCommRing A] [StarRing A] [CStarRing A]
+  [NormedSpace ℂ A] [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
+  [CompleteSpace A] : (of A : Type u) = A := rfl
+
+instance forgetNonUnitalNormedRing (A : CommCStarAlg) :
+  NonUnitalNormedCommRing ((forget CommCStarAlg).obj A) :=
+A.nonUnitalNormedCommRing
+instance forgetStarRing (A : CommCStarAlg) : StarRing ((forget CommCStarAlg).obj A) :=
+A.starRing
+instance forgetCStarRing (A : CommCStarAlg) : CStarRing ((forget CommCStarAlg).obj A) :=
+A.cstarRing
+instance forgetNormedSpace (A : CommCStarAlg) : NormedSpace ℂ ((forget CommCStarAlg).obj A) :=
+A.normedSpace
+instance forgetIsScalarTower (A : CommCStarAlg) :
+  IsScalarTower ℂ ((forget CommCStarAlg).obj A) ((forget CommCStarAlg).obj A) :=
+  A.isScalarTower
+instance forgetSMulCommClass (A : CommCStarAlg) :
+  SMulCommClass ℂ ((forget CommCStarAlg).obj A) ((forget CommCStarAlg).obj A) :=
+  A.smulCommClass
+instance forgetStarModule (A : CommCStarAlg) : StarModule ℂ ((forget CommCStarAlg).obj A) :=
+A.starModule
+instance forgetCompleteSpace (A : CommCStarAlg) : CompleteSpace ((forget CommCStarAlg).obj A) :=
+A.completeSpace
+
+end CommCStarAlg
 
 namespace CStarAlg₁
 
@@ -176,7 +246,7 @@ def of (A : Type u) [NormedCommRing A] [StarRing A] [CStarRing A] [NormedAlgebra
 
 instance hasForget₂CStarAlg₁ : HasForget₂ CommCStarAlg₁ CStarAlg₁ where
   forget₂ := {
-    obj := fun X ↦ { CommCStarAlg₁carrier := X.carrier }
+    obj := fun X ↦ { carrier := X.carrier }
     map := fun f ↦ f
   }
 
