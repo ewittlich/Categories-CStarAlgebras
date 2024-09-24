@@ -271,6 +271,18 @@ noncomputable def CStarAlgIso {A B : Type u} [NonUnitalNormedRing A] [StarRing A
   hom_inv_id := NonUnitalStarAlgHom.ext $ fun _ ↦ e.symm_apply_apply _,
   inv_hom_id := NonUnitalStarAlgHom.ext $ fun _ ↦ e.apply_symm_apply _ }
 
+/-- Build an isomorphism in the category `CommCStarAlg` from a `StarAlgEquiv` between C⋆-algebras -/
+@[simps]
+noncomputable def CommCStarAlgIso {A B : Type u} [NonUnitalNormedCommRing A] [StarRing A]
+  [CStarRing A] [NormedSpace ℂ A] [IsScalarTower ℂ A A] [SMulCommClass ℂ A A]
+  [StarModule ℂ A] [CompleteSpace A] [NonUnitalNormedCommRing B] [StarRing B] [CStarRing B]
+  [NormedSpace ℂ B] [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] [StarModule ℂ B]
+  [CompleteSpace B] (e : A ≃⋆ₐ[ℂ] B) : CommCStarAlg.of A ≅ CommCStarAlg.of B :=
+{ hom := (e : A →⋆ₙₐ[ℂ] B),
+  inv := (e.symm : B →⋆ₙₐ[ℂ] A),
+  hom_inv_id := NonUnitalStarAlgHom.ext $ fun _ ↦ e.symm_apply_apply _,
+  inv_hom_id := NonUnitalStarAlgHom.ext $ fun _ ↦ e.apply_symm_apply _ }
+
 /-- Build an isomorphism in the category `CStarAlg₁` from a `StarAlgEquiv` between unital
 C⋆-algebras -/
 @[simps]
