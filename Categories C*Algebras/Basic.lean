@@ -4,6 +4,8 @@ noncomputable section
 
 open CategoryTheory
 
+open Unitization
+
 /-- The type of C⋆-algebras with ⋆-algebra morphisms. -/
 structure CStarAlg :=
 (carrier : Type u)
@@ -49,6 +51,8 @@ structure CommCStarAlg₁ :=
 [starModule : StarModule ℂ carrier]
 [completeSpace : CompleteSpace carrier]
 
+universe u v
+
 namespace CStarAlg
 
 noncomputable instance : Inhabited CStarAlg := ⟨⟨ℂ⟩⟩
@@ -62,6 +66,7 @@ noncomputable instance : Category CStarAlg.{u} :=
 { Hom := fun A B ↦ A →⋆ₙₐ[ℂ] B,
   id := fun A ↦ NonUnitalStarAlgHom.id ℂ A,
   comp := fun f g ↦ g.comp f }
+
 
 noncomputable instance : ConcreteCategory CStarAlg.{u} :=
 { forget :=
@@ -176,6 +181,13 @@ noncomputable instance : Category CStarAlg₁.{u} :=
 { Hom := fun A B => A →⋆ₐ[ℂ] B,
   id := fun A => StarAlgHom.id ℂ A,
   comp := fun  f g => g.comp f }
+
+
+noncomputable def CStarAlg.unitization : CStarAlg ⥤ CStarAlg₁ where
+  obj A := ⟨Unitization ℂ A⟩
+  map f := starMap f
+  map_id _ := starMap_id
+  map_comp _ _ := starMap_comp
 
 noncomputable instance : ConcreteCategory CStarAlg₁.{u} :=
 { forget :=
